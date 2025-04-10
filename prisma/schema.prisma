@@ -1,0 +1,117 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model customer {
+  id         String   @id @default(uuid())
+  name       String
+  email      String   @unique
+  password   String
+  phone      String
+  created_at DateTime @default(now())
+  is_deleted Boolean  @default(false) // Soft delete
+  orders     order[]
+  reviews    review[]
+}
+
+model store_owner {
+  id         String   @id @default(uuid())
+  name       String
+  email      String   @unique
+  password   String
+  phone      String
+  created_at DateTime @default(now())
+  stores     store[]
+}
+
+model store {
+  id         String   @id @default(uuid())
+  owner_id   String
+  name       String
+  email      String   @unique
+  phone      String
+  location   String
+  category   String
+  created_at DateTime @default(now())
+  is_deleted Boolean  @default(false) // Soft delete
+  owner      store_owner @relation(fields: [owner_id], references: [id], onDelete: Restrict)
+  admins     store_admin[]
+  products   product[]
+  orders     order[]
+  reviews    review[]
+}
+
+model store_admin {
+  id         String   @id @default(uuid())
+  store_id   String
+  name       String
+  email      String   @unique
+  password   String
+  phone      String
+  created_at DateTime @default(now())
+  store      store    @relation(fields: [store_id], references: [id], onDelete: Cascade)
+}
+
+model product {
+  id             String   @id @default(uuid())
+  store_id       String
+  name           String
+  description    String?
+  price          Float
+  stock          Int
+  expiration_date DateTime?
+  created_at     DateTime @default(now())
+  is_deleted     Boolean  @default(false) // Soft delete
+  store          store    @relation(fields: [store_id], references: [id], onDelete: Restrict)
+  order_details  order_detail[]
+}
+
+model order {
+  id          String   @id @default(uuid())
+  customer_id String?
+  store_id    String
+  status      String
+  total_price Float
+  created_at  DateTime @default(now())
+  customer    customer?  @relation(fields: [customer_id], references: [id], onDelete: SetNull)
+  store       store      @relation(fields: [store_id], references: [id], onDelete: Restrict)
+  order_details order_detail[]
+  payment     payment?
+}
+
+model order_detail {
+  id         String   @id @default(uuid())
+  order_id   String
+  product_id String
+  quantity   Int
+  subtotal   Float
+  order      order   @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  product    product @relation(fields: [product_id], references: [id], onDelete: Restrict)
+}
+
+model payment {
+  id             String   @id @default(uuid())
+  order_id       String   @unique
+  method         String
+  status         String
+  transaction_id String   @unique
+  amount         Float
+  created_at     DateTime @default(now())
+  order          order    @relation(fields: [order_id], references: [id], onDelete: Cascade)
+}
+
+model review {
+  id          String   @id @default(uuid())
+  customer_id String?
+  store_id    String
+  rating      Int
+  comment     String?
+  created_at  DateTime @default(now())
+  customer    customer?  @relation(fields: [customer_id], references: [id], onDelete: SetNull)
+  store       store      @relation(fields: [store_id], references: [id], onDelete: Cascade)
+}

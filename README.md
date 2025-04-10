@@ -14,3 +14,16 @@
 | Testing                  | Jest + Supertest                      |
 | Storage                  | MinIO                                 |
 | Deployment               | VPS + Docker                          |
+
+## Database Design
+| Table Name        | Columns |
+|------------------|---------|
+| **customers**    | id (PK), name, email, password, phone, created_at |
+| **store_owners** | id (PK), name, email, password, phone, created_at |
+| **store_admins** | id (PK), store_id (FK), name, email, password, phone, created_at |
+| **stores**       | id (PK), store_owner_id (FK), store_name, email, phone, location, category, created_at |
+| **products**     | id (PK), store_id (FK), name, description, price, stock, expiration_date, created_at |
+| **orders**       | id (PK), customer_id (FK), store_id (FK), status, total_price, created_at |
+| **order_details** | id (PK), order_id (FK), product_id (FK), quantity, subtotal |
+| **payments**     | id (PK), order_id (FK), method, status, transaction_id, amount, created_at |
+| **reviews**      | id (PK), customer_id (FK), store_id (FK), rating, comment, created_at |

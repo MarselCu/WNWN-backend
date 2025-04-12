@@ -2,19 +2,18 @@ version: '3.9'
 
 services:
   backend:
-  build: .
-  container_name: wwnn-backend
-  ports:
-    - "3000:3000"
-  env_file:
-    - .env
-  depends_on:
-    - db
-  volumes:
-    - .:/app
-    - /app/node_modules
-  command: ["sh", "-c", "wait-for-it db:5432 -- npm run dev"]
-
+    build: .
+    container_name: wwnn-backend
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      - db
+    volumes:
+      - .:/app
+      - /app/node_modules
+    command: ["sh", "-c", "wait-for-it db:5432 -- npm run dev"]
 
   db:
     image: postgres:15

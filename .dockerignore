@@ -1,0 +1,7 @@
+node_modules
+.git
+.env
+prisma/.prisma
+prisma/migrations
+LICENSE
+README.md

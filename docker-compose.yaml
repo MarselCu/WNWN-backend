@@ -11,9 +11,9 @@ services:
     depends_on:
       - db
     volumes:
-      - .:/app
-      - /app/node_modules
-    command: ["sh", "-c", "wait-for-it db:5432 -- npm run dev"]
+      - ./src:/app/src
+      - ./prisma:/app/prisma
+    command: ["npm", "run", "dev"]
 
   db:
     image: postgres:15
